@@ -17,39 +17,34 @@ file_output.write(column_heads)
 file_output.write(column_space)
 
 
-
-exchanges = set()
 for line in file_read:
 
     fields = line.split()
     record_type = fields[0].strip()
 
+
     if record_type == "B" and len(fields[1]) == 5 and fields[1] == "NYMCL":
         commodity_code = fields[1][-2:]
-        contract_month = fields[2][3:]
-        contract_month = contract_month[0:4] + "-" + contract_month[4:]
         product_type_code = fields[2][0:3]
         fut_exp_date = fields[3][-10:-2]
         fut_exp_date = fut_exp_date[:4] + "-" + fut_exp_date[4:6] + "-" + fut_exp_date[6:]
-        exchanges.add(commodity_code)
         options_code = ''
         options_expirations_date = ''
-        formatted_row = f"{commodity_code: <20} {contract_month: <20} {product_type_code.capitalize() : <20} {fut_exp_date: <20} {options_code: <20} {options_expirations_date: <20}\n"
-        file_output.write(formatted_row)
+
 
     if record_type == "B" and len(fields[1]) == 5 and fields[1] == "NYMLO":
         commodity_code = fields[4][-2:] #CL
-        contract_month = fields[2][3:]
-        contract_month = contract_month[0:4] + "-" + contract_month[4:]
         product_type_code = "Opt"
         fut_exp_date = ''
         options_expirations_date = fields[4][-10:-2]
         options_code = 'LO'
 
 
+    if record_type == "B" and len(fields[1]) == 5 and (fields[1] == "NYMLO" or fields[1] == "NYMCL"):
+        contract_month = fields[2][3:]
+        contract_month = contract_month[0:4] + "-" + contract_month[4:]
         formatted_row = f"{commodity_code: <20} {contract_month: <20} {product_type_code.capitalize() : <20} {fut_exp_date: <20} {options_code: <20} {options_expirations_date: <20}\n"
         file_output.write(formatted_row)
-
 
 
 
