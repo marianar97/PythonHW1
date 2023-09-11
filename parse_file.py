@@ -68,7 +68,6 @@ for line in file_read:
         file_output.write(c5)
 
     if record_type[0:7] == "81NYMCL" and fields[1] =="CL":
-        types.add(record_type)
         commodity_code = fields[1]
         contract_month = fields[3]
         contract_month = contract_month[0:4] + "-" + contract_month[4:]
@@ -76,11 +75,15 @@ for line in file_read:
         setl_price = int(fields[4].split('+')[-1][0:-1]) / 100
         strike_price = ''
 
-
         formatted_row = f"{commodity_code: <20} {contract_month: <20} {product_type_code.capitalize() : <20} {strike_price: <20} {setl_price: <20}\n"
         file_output.write(formatted_row)
 
+    if record_type[0:7] == "81NYMON" and fields[1] =="NG":
+        commodity_code = 'CL'
+        contract_month = fields[2][-6:]
+        contract_type = 'Call' if fields[2][3] == 'C' else 'Put'
+        strike_price = int(fields[4][:7]) / 1000
+        setl_price = int(fields[4][-15:-1])/10000
 
-
-
-# print(types)
+        formatted_row = f"{commodity_code: <20} {contract_month: <20} {contract_type.capitalize() : <20} {strike_price: <20} {setl_price: <20}\n"
+        file_output.write(formatted_row)
